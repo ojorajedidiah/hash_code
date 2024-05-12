@@ -7,15 +7,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Specify the file where the payload will be stored
   $file = 'payload.txt';
 
-  // Write the payload to the specified file
-  file_put_contents($file, $payload,FILE_APPEND);
+  // read content of payload
+  $tmpArr = json_decode($payload, true);
+  $newStr = "";
+  foreach ($tmpArr as $key => $value) {
+    $newStr .= "[".$key . ": " . $value . "],";
+  }
 
-  // get the originating IP
   // Check if the IP is IPv6 and get the originating IP address
   $ip = $_SERVER['REMOTE_ADDR'];
   if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-    $originatingIP = "\nOriginating IP is ".$ip;
-    file_put_contents($file,$ip,FILE_APPEND);
+    $saveData = "\nOriginating IP is: ".$ip ." Payload is: ".$newStr;
+    file_put_contents($file,$saveData,FILE_APPEND);
   } else {
     echo "\nNot an IPv6 address";
   }
